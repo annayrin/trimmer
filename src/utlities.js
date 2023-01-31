@@ -27,9 +27,9 @@ export function millisToMinutesAndSeconds(millis) {
     }
 }
 
-export function getSecondsTracker(millis) {
+export function getSecondsTracker(initialTime) {
     const arr = []
-    for (let i = 0; i < millis; i++) {
+    for (let i = 0; i < initialTime; i++) {
         const currentTime = millisToMinutesAndSeconds(i)
         if (arr.indexOf(currentTime) === -1) arr.push(currentTime)
     }

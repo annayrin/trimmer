@@ -4,7 +4,7 @@ import useResizableDiv from "./use-resizable-div";
 import {dragIcon, leftArrow, rightArrow} from "../../utlities";
 
 const initialData = {
-    initialTime: 63200, // up to 3 min to not mess up the seconds
+    initialTime: 82200, // up to 3 min to not mess up the seconds
     minTime: 10000,
 }
 function ResizableDiv() {
@@ -72,7 +72,6 @@ function ResizableDiv() {
                 </div>
             </div>
         </section>
-
     );
 }
 
