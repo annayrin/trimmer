@@ -1,4 +1,4 @@
-import {useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {getSecondsTracker, millisToMinutesAndSeconds} from "../../utlities";
 
 function UseResizableDiv(initialData) {
@@ -18,11 +18,11 @@ function UseResizableDiv(initialData) {
         width: `${customWidth * 100 / initialWidth}%`, //px to %
         left: `${customLeft * 100 / initialWidth}%` //px to %
     }
+    const secondsTrack = useMemo(() => getSecondsTracker(initialTime), [initialTime])
     const time = millisToMinutesAndSeconds(initialTime * customWidth / initialWidth)
     const start = millisToMinutesAndSeconds(customLeft * initialTime / initialWidth)
     const end = millisToMinutesAndSeconds((customWidth + customLeft) * initialTime / initialWidth)
     const minWidth = minTime * initialWidth / initialTime
-    const secondsTrack = useMemo(() => getSecondsTracker(initialTime), [initialTime])
     const handleMouseDown = (event, side) => {
         event.preventDefault()
         setSide(side)
@@ -31,7 +31,6 @@ function UseResizableDiv(initialData) {
     }
     const handleMouseMove = event => {
         const leftMargin = event.clientX - initialLeft
-
         if (resizing) {
             if (side === "right") {
                 const width = customWidth - (customWidth - (leftMargin - customLeft))
@@ -68,7 +67,7 @@ function UseResizableDiv(initialData) {
         return index % timeLapse === 0 ? elem1 : elem2
     }
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         setInitialWidth(divRef.current.offsetWidth) // to receive the initial width of the trimmer in px to calc the %
         setCustomWidth(divRef.current.offsetWidth)
         setInitialLeft(divRef.current.offsetParent.offsetLeft)  // distance from the left viewport of the div(trim holder not trimmer)

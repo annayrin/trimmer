@@ -26,6 +26,7 @@ export function millisToMinutesAndSeconds(millis) {
         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
     }
 }
+
 export function getSecondsTracker(millis) {
     const arr = []
     for (let i = 0; i < millis; i++) {
