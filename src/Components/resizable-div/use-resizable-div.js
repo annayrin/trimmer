@@ -1,11 +1,10 @@
-import {useLayoutEffect, useRef, useState} from 'react';
+import {useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {getSecondsTracker, millisToMinutesAndSeconds} from "../../utlities";
-
 
 function UseResizableDiv(initialData) {
 
-    const divRef = useRef(null)
     const {initialTime, minTime} = initialData
+    const divRef = useRef(null)
     const [initialWidth, setInitialWidth] = useState(null)
     const [initialLeft, setInitialLeft] = useState(0) // left from viewport
     const [customWidth, setCustomWidth] = useState(null)
@@ -19,13 +18,11 @@ function UseResizableDiv(initialData) {
         width: `${customWidth * 100 / initialWidth}%`, //px to %
         left: `${customLeft * 100 / initialWidth}%` //px to %
     }
-
     const time = millisToMinutesAndSeconds(initialTime * customWidth / initialWidth)
     const start = millisToMinutesAndSeconds(customLeft * initialTime / initialWidth)
     const end = millisToMinutesAndSeconds((customWidth + customLeft) * initialTime / initialWidth)
     const minWidth = minTime * initialWidth / initialTime
-    const secondsTrack = getSecondsTracker(initialTime)
-
+    const secondsTrack = useMemo(() => getSecondsTracker(initialTime), [initialTime])
     const handleMouseDown = (event, side) => {
         event.preventDefault()
         setSide(side)
@@ -34,6 +31,7 @@ function UseResizableDiv(initialData) {
     }
     const handleMouseMove = event => {
         const leftMargin = event.clientX - initialLeft
+
         if (resizing) {
             if (side === "right") {
                 const width = customWidth - (customWidth - (leftMargin - customLeft))
@@ -56,12 +54,10 @@ function UseResizableDiv(initialData) {
             }
         }
     }
-
     const handleDrag = () => {
         setDragging(true)
         if (resizing) setResizing(false)
     }
-
     const handleMouseUp = () => {
         if (resizing) setResizing(false)
         if (side?.length) setSide("")

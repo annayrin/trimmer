@@ -94,8 +94,9 @@
 }
 
 .left {
-    left: 0;
+    left: -2px;
     top: 0;
+    border-radius: 5px 0 0 5px;
 }
 
 .left:after {
@@ -114,8 +115,9 @@
 }
 
 .right {
-    right: 0;
+    right: -2px;
     top: 0;
+    border-radius: 0 5px 5px 0;
 }
 
 .right:after {
