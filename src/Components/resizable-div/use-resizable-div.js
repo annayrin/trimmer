@@ -11,20 +11,19 @@ function UseResizableDiv(initialData) {
     const [widthCopy, setWidthCopy] = useState(null) // for the left resizer
     const [customLeft, setCustomLeft] = useState(0)
     const [resizing, setResizing] = useState(false)
-    const [side, setSide] = useState("")
+    const [side, setSide] = useState(null)
     const [dragging, setDragging] = useState(false)
-
     const customStyle = {
         width: `${customWidth * 100 / initialWidth}%`, //px to %
         left: `${customLeft * 100 / initialWidth}%` //px to %
     }
     const secondsTrack = useMemo(() => getSecondsTracker(initialTime), [initialTime])
-    const time = millisToMinutesAndSeconds(initialTime * customWidth / initialWidth)
-    const start = millisToMinutesAndSeconds(customLeft * initialTime / initialWidth)
-    const end = millisToMinutesAndSeconds((customWidth + customLeft) * initialTime / initialWidth)
+    const initialDiff = initialTime / initialWidth
+    const time = millisToMinutesAndSeconds( customWidth * initialDiff)
+    const start = millisToMinutesAndSeconds(customLeft * initialDiff)
+    const end = millisToMinutesAndSeconds((customWidth + customLeft) * initialDiff)
     const minWidth = minTime * initialWidth / initialTime
     const handleMouseDown = (event, side) => {
-        event.preventDefault()
         setSide(side)
         setResizing(true)
         if (dragging) setDragging(false)
@@ -59,7 +58,7 @@ function UseResizableDiv(initialData) {
     }
     const handleMouseUp = () => {
         if (resizing) setResizing(false)
-        if (side?.length) setSide("")
+        if (side?.length) setSide(null)
         if (dragging) setDragging(false)
     }
 
