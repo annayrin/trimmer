@@ -1,12 +1,12 @@
 import React from 'react';
 import ResizableDiv from "../resizable-div/resizable-div";
-import "./trimmer.css"
+import {Wrapper} from "../styled-components";
 
 function Trimmer() {
     return (
-        <section className="trim-wrapper">
+        <Wrapper>
                 <ResizableDiv />
-        </section>
+        </Wrapper>
 
     );
 }

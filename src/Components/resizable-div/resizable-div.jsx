@@ -1,20 +1,32 @@
 import React from "react";
 import "./resizable-div.css"
 import useResizableDiv from "./use-resizable-div";
-import {dragIcon, leftArrow, rightArrow} from "../../utlities";
+import Resizer from "../resizer/resizer";
+import {
+    CurrentSecond,
+    Resizable,
+    SecondLines,
+    Seconds,
+    SecondsCounter,
+    TotalTimeTrack,
+    TrimHolder,
+    TrimWrapper
+} from "../styled-components";
+import {dragIcon, leftArrow, rightArrow} from "../UI/ui";
+import Dragger from "../dragger/dragger";
 
 const initialData = {
     initialTime: 82200, // up to 3 min to not mess up the seconds
     minTime: 10000,
 }
+
+
 function ResizableDiv() {
 
     const {
-        divRef,
-        time,
+        resizableRef,
+        customTime,
         customStyle,
-        start,
-        end,
         secondsTrack,
         handleMouseUp,
         handleMouseMove,
@@ -24,54 +36,43 @@ function ResizableDiv() {
     } = useResizableDiv(initialData)
 
     return (
-        <section className="trim-content-wrapper"
-                 onMouseUp={handleMouseUp}
-        >
-            <div className="trim-container"
-                 onMouseMove={handleMouseMove}
-            >
-                <div
-                    ref={divRef}
-                    className={"resizable"}
-                    data-time={time}
-                    style={customStyle}
+        <TrimWrapper onMouseUp={handleMouseUp}>
+            <TrimHolder onMouseMove={handleMouseMove}>
+                <Resizable
+                    ref={resizableRef}
+                    theme={customStyle}
                 >
-                    <div className='resizer left '
-                         data-start-second={start}
-                         onMouseDown={(event) => handleMouseDown(event, "left")}
-                    >
-                        {leftArrow}
-                    </div>
-                    <div className="drag"
-                         onMouseDown={handleDrag}
-                    >
-                        {dragIcon}
-                    </div>
-                    <div className='resizer right'
-                         data-end-second={end}
-                         onMouseDown={(event) => handleMouseDown(event, "right")}
-                    >
-                        {rightArrow}
-                    </div>
-                </div>
-                <div className="seconds-counter">
+                    <TotalTimeTrack>{customTime.time}</TotalTimeTrack>
+                    <Resizer
+                        className={"left"}
+                        time={customTime.start}
+                        icon={leftArrow}
+                        handleMouseDown={(event) => handleMouseDown(event, "left")}
+                    />
+                    <Dragger
+                        handleDrag={handleDrag}
+                        icon={dragIcon}
+                    />
+                    <Resizer
+                        className={"right"}
+                        time={customTime.end}
+                        icon={rightArrow}
+                        handleMouseDown={(event) => handleMouseDown(event, "right")}
+                    />
+                </Resizable>
+                <SecondsCounter>
                     {secondsTrack.map((item, i) => {
-                        return getElementAccordingToTimeLapse(i, 5,
-                            (<span
-                                key={`second_${item}_${i}`}
-                                data-second={item}
-                                className="seconds note">
-                            </span>),
-                            (<span
-                                key={`second_${item}_${i}`}
-                                className="seconds">
-                        </span>)
-                        )
+                        return getElementAccordingToTimeLapse(i, 5) ?
+                            <Seconds key={`second_${item}_${i}`}>
+                                <CurrentSecond>{item}</CurrentSecond>
+                            </Seconds> :
+                            <SecondLines key={`second_${item}_${i}`}>
+                            </SecondLines>
                     })
                     }
-                </div>
-            </div>
-        </section>
+                </SecondsCounter>
+            </TrimHolder>
+        </TrimWrapper>
     );
 }
 

@@ -1,83 +1,107 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {getSecondsTracker, millisToMinutesAndSeconds} from "../../utlities";
+import {
+    fromPxToPercents,
+    getPxFromTime,
+    getSecondsTracker,
+    getTimeFromPx,
+    millisToMinutesAndSeconds
+} from "../../utlities";
+
 
 function UseResizableDiv(initialData) {
 
+
+    useEffect(() => {
+        setInitialWidth(resizableRef.current.offsetWidth) // to receive the initial width of the trimmer in px to calc the %
+        //setCustomWidth(resizableRef.current.offsetWidth)
+        setInitialLeft(resizableRef.current.offsetParent.offsetLeft)  // distance from the left viewport of the div(trim holder not trimmer)
+    }, [])
+
+    /* *** */
+
     const {initialTime, minTime} = initialData
-    const divRef = useRef(null)
+    const resizableRef = useRef(null)
     const [initialWidth, setInitialWidth] = useState(null)
     const [initialLeft, setInitialLeft] = useState(0) // left from viewport
-    const [customWidth, setCustomWidth] = useState(null)
-    const [widthCopy, setWidthCopy] = useState(null) // for the left resizer
-    const [customLeft, setCustomLeft] = useState(0)
     const [resizing, setResizing] = useState(false)
     const [side, setSide] = useState(null)
     const [dragging, setDragging] = useState(false)
-    const customStyle = {
-        width: `${customWidth * 100 / initialWidth}%`, //px to %
-        left: `${customLeft * 100 / initialWidth}%` //px to %
-    }
+
+    const [leftMargin, setLeftMargin] = useState(0)
+    const [rightMargin, setRightMargin] = useState(0)
+    const [customWidth, setCustomWidth] = useState(null)
+
+    const [customStyle, setCustomStyle] = useState({
+        width: "100%",
+        left: "0%"
+    })
+    const [customTime, setCustomTime] = useState({
+        start: "00:00",
+        end: millisToMinutesAndSeconds(initialTime),
+        time: millisToMinutesAndSeconds(initialTime)
+    })
     const secondsTrack = useMemo(() => getSecondsTracker(initialTime), [initialTime])
-    const initialDiff = initialTime / initialWidth
-    const time = millisToMinutesAndSeconds( customWidth * initialDiff)
-    const start = millisToMinutesAndSeconds(customLeft * initialDiff)
-    const end = millisToMinutesAndSeconds((customWidth + customLeft) * initialDiff)
-    const minWidth = minTime * initialWidth / initialTime
+    const minWidth = getPxFromTime(minTime, initialWidth, initialTime)
     const handleMouseDown = (event, side) => {
         setSide(side)
         setResizing(true)
         if (dragging) setDragging(false)
     }
-    const handleMouseMove = event => {
-        const leftMargin = event.clientX - initialLeft
+    const handleMouseMove = (event) => {
+        const target = event.clientX - initialLeft // exact px on resizable div
         if (resizing) {
             if (side === "right") {
-                const width = customWidth - (customWidth - (leftMargin - customLeft))
-                if (width <= initialWidth - customLeft && width >= minWidth) {
+                const width = target - leftMargin
+                if (width > minWidth && target < initialWidth) {
+                    resizableRef.current.style.width = fromPxToPercents(width, initialWidth)
+                    setRightMargin(initialWidth - target)
                     setCustomWidth(width)
-                    setWidthCopy(width)
                 }
             } else if (side === "left") {
-                const currentLeftMargin = leftMargin - 10 // reducing for 10px to let the event.target on the resizer
-                const width = (widthCopy ? widthCopy : initialWidth) - currentLeftMargin
-                if (width >= minWidth && currentLeftMargin >= 0) {
-                    setCustomLeft(currentLeftMargin)
+                const width = initialWidth - target - rightMargin
+                if (target > 0 && width > minWidth) {
+                    resizableRef.current.style.width = fromPxToPercents(width, initialWidth)
+                    resizableRef.current.style.left = fromPxToPercents(target, initialWidth)
                     setCustomWidth(width)
+                    setLeftMargin(target)
                 }
             }
         } else if (dragging) {
-            const currentLeftMargin = leftMargin - (customWidth / 2)  // to keep the mouse in the middle
-            if (currentLeftMargin >= 0 && currentLeftMargin + customWidth <= initialWidth) {
-                setCustomLeft(currentLeftMargin)
+            const mouseTarget = target - customWidth / 2
+            if (mouseTarget > 0 && mouseTarget + customWidth < initialWidth) {
+                resizableRef.current.style.left = fromPxToPercents(mouseTarget, initialWidth)
+                setLeftMargin(mouseTarget)
             }
         }
+        setCustomTime({
+            time: millisToMinutesAndSeconds(getTimeFromPx(customWidth ? customWidth : initialWidth, initialTime, initialWidth)),
+            end: millisToMinutesAndSeconds(getTimeFromPx(customWidth + leftMargin, initialTime, initialWidth)),
+            start: millisToMinutesAndSeconds(getTimeFromPx(leftMargin, initialTime, initialWidth))
+        })
     }
     const handleDrag = () => {
         setDragging(true)
         if (resizing) setResizing(false)
     }
     const handleMouseUp = () => {
+        setCustomStyle({
+            left: fromPxToPercents(leftMargin, initialWidth),
+            width: fromPxToPercents(customWidth, initialWidth)
+        })
         if (resizing) setResizing(false)
         if (side?.length) setSide(null)
         if (dragging) setDragging(false)
     }
 
-    const getElementAccordingToTimeLapse = (index, timeLapse, elem1, elem2) => {
-        return index % timeLapse === 0 ? elem1 : elem2
+    const getElementAccordingToTimeLapse = (index, timeLapse) => { //need to change this to return a boolean and show the elem according to bool
+        return index % timeLapse === 0
     }
 
-    useEffect(() => {
-        setInitialWidth(divRef.current.offsetWidth) // to receive the initial width of the trimmer in px to calc the %
-        setCustomWidth(divRef.current.offsetWidth)
-        setInitialLeft(divRef.current.offsetParent.offsetLeft)  // distance from the left viewport of the div(trim holder not trimmer)
-    }, [])
 
     return {
-        divRef,
-        time,
+        resizableRef,
         customStyle,
-        start,
-        end,
+        customTime,
         secondsTrack,
         handleMouseUp,
         handleMouseMove,
