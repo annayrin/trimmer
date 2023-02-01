@@ -24,8 +24,8 @@ export const Resizable = styled.div`
   position: absolute;
   border: 2px solid rgb(247, 191, 6);
   height: 100%;
-  width: ${props => props.theme.width};
-  left: ${props => props.theme.left};
+  width: 100%;
+  left: 0;
   border-radius: 5px;
   box-sizing: border-box;
   z-index: 2;

@@ -7,8 +7,6 @@ function Trimmer() {
         <Wrapper>
                 <ResizableDiv />
         </Wrapper>
-
     );
 }
-
 export default Trimmer;

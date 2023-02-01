@@ -1,5 +1,3 @@
-
-
 export function millisToMinutesAndSeconds(millis) {
     let minutes = Math.floor(millis / 60000);
     let seconds = +((millis % 60000) / 1000).toFixed(0);
@@ -9,6 +7,7 @@ export function millisToMinutesAndSeconds(millis) {
         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
     }
 }
+
 export function getSecondsTracker(initialTime) {
     const arr = []
     for (let i = 0; i < initialTime; i++) {
@@ -20,6 +19,10 @@ export function getSecondsTracker(initialTime) {
 
 export function fromPxToPercents(currentWidth, initialWidth) {
     return `${currentWidth * 100 / initialWidth}%`
+}
+
+export function fromPercentToPx(currentPx, initialWidth) {
+    return currentPx * initialWidth / 100
 }
 
 export function getTimeFromPx(customWidth, totalTime, totalWidth) {

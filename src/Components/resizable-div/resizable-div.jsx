@@ -26,48 +26,47 @@ function ResizableDiv() {
     const {
         resizableRef,
         customTime,
-        customStyle,
         secondsTrack,
         handleMouseUp,
         handleMouseMove,
         handleMouseDown,
-        handleDrag,
         getElementAccordingToTimeLapse,
     } = useResizableDiv(initialData)
 
     return (
         <TrimWrapper onMouseUp={handleMouseUp}>
-            <TrimHolder onMouseMove={handleMouseMove}>
+            <TrimHolder>
                 <Resizable
                     ref={resizableRef}
-                    theme={customStyle}
                 >
                     <TotalTimeTrack>{customTime.time}</TotalTimeTrack>
                     <Resizer
                         className={"left"}
                         time={customTime.start}
                         icon={leftArrow}
-                        handleMouseDown={(event) => handleMouseDown(event, "left")}
+                        handleMouseDown={event => handleMouseDown(event, "left")}
+                        handleMouseMove={handleMouseMove}
                     />
                     <Dragger
-                        handleDrag={handleDrag}
+                        handleMouseDown={event => handleMouseDown(event, "drag")}
+                        handleMouseMove={handleMouseMove}
                         icon={dragIcon}
                     />
                     <Resizer
                         className={"right"}
                         time={customTime.end}
                         icon={rightArrow}
-                        handleMouseDown={(event) => handleMouseDown(event, "right")}
+                        handleMouseDown={event => handleMouseDown(event, "right")}
+                        handleMouseMove={handleMouseMove}
                     />
                 </Resizable>
                 <SecondsCounter>
                     {secondsTrack.map((item, i) => {
                         return getElementAccordingToTimeLapse(i, 5) ?
                             <Seconds key={`second_${item}_${i}`}>
-                                <CurrentSecond>{item}</CurrentSecond>
+                                <CurrentSecond> {item} </CurrentSecond>
                             </Seconds> :
-                            <SecondLines key={`second_${item}_${i}`}>
-                            </SecondLines>
+                            <SecondLines key={`second_${item}_${i}`}/>
                     })
                     }
                 </SecondsCounter>
