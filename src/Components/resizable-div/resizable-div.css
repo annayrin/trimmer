@@ -11,6 +11,16 @@
     border-radius: 0 5px 5px 0;
 }
 
+.startTime {
+    left: 0;
+}
+
+.endTime {
+    right: 0;
+}
+
+
+
 @media (max-width: 940px) {
     .note:not(:nth-child(2n+1)):after{
         display: none;

@@ -1,5 +1,6 @@
 import React, {memo} from 'react';
 import {Drag, TotalTimeTrack} from "../styled-components";
+import {millisToMinutesAndSeconds} from "../../utlities";
 
 const Dragger = memo(({className, icon, time, handleMouseDown}) => {
     return (
@@ -8,7 +9,7 @@ const Dragger = memo(({className, icon, time, handleMouseDown}) => {
         >
             {icon}
             <TotalTimeTrack>
-                {time}
+                {millisToMinutesAndSeconds(time)}
             </TotalTimeTrack>
         </Drag>
     );

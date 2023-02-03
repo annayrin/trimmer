@@ -4,21 +4,60 @@ export const Wrapper = styled.section`
   background: white;
   height: 100%;
   width: 100%;
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 export const TrimWrapper = styled(Wrapper)`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+  width: 100%;
+  height: 250px;
+  padding: 25px;
+  
 `
+
+export const TrimContainer = styled.div`
+  width: 200%;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 10px;
+  height: 160px;
+  overflow-x: ${props => props.counter > 1 ? "auto" : "hidden" } ;
+  position: relative;
+`
+
+export const Overflowed = styled.div `
+  width: ${props => props.counter}00%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 30px;
+
+`
+
+export const SecondsCounter = styled.div`
+  height: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+`
+
 export const TrimHolder = styled.div`
-  height: 55px;
   border-radius: 5px;
-  width: 90%;
-  margin: auto;
+  width: 100%;
   background-color: rgb(207, 224, 255);
   position: relative;
+  height: 55px;
 `
 export const Resizable = styled.div`
   position: absolute;
@@ -54,8 +93,9 @@ export const TimeTrack = styled.span`
   text-align: center;
   line-height: 21px;
   font-weight: 600;
-
 `
+
+
 export const TotalTimeTrack = styled(TimeTrack)`
   top: -24px;
   left: 50%;
@@ -67,12 +107,13 @@ export const TotalTimeTrack = styled(TimeTrack)`
 `
 export const HiddenTimeTrack = styled(TimeTrack)`
   display: none;
+  position: absolute;
   bottom: -25px;
   background: rgba(0, 0, 0, 0.75);
   color: #bebcbc;
   font-size: 12px;
   border-radius: 8px;
-  ${Resizable}:hover & {
+  ${TrimWrapper}:hover & {
     display: block;
   }
 `
@@ -85,11 +126,11 @@ export const SecondLines = styled.div`
 
 export const Seconds = styled(SecondLines)`
   position: relative;
-  height: 30px;
+  height: 22px;
 `
 
 export const CurrentSecond = styled(TimeTrack)`
-  top: -30px;
+  top: -22px;
   left: 0;
   width: auto;
   transform: translate(-50%);
@@ -97,7 +138,7 @@ export const CurrentSecond = styled(TimeTrack)`
 `
 
 export const Icon = styled.svg`
-  fill: rgb(37, 46, 72);
+  fill: ${props => props.color || "steelblue"};
   width: 20px;
 `;
 
@@ -120,12 +161,4 @@ export const Drag = styled.div`
   align-items: center;
   justify-content: center;
 `
-export const SecondsCounter = styled.div`
-  position: absolute;
-  top: -40px;
-  height: 30px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-`
+

@@ -3,4 +3,22 @@
   height: 100vh;
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(114, 145, 246);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7291f6;
+  cursor: pointer;
+}
+
 

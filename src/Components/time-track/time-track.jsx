@@ -2,9 +2,9 @@ import React, {memo} from 'react';
 import {CurrentSecond, SecondLines, Seconds, SecondsCounter} from "../styled-components";
 import {getElementAccordingToTimeLapse} from "../../utlities";
 
-const TimeTrack = memo(({secondsTrack}) => {
+const TimeTrack = memo(({secondsTrack, counter}) => {
     return (
-        <SecondsCounter>
+        <SecondsCounter counter={counter}>
             {secondsTrack?.map((item, i) => {
                 return getElementAccordingToTimeLapse(i, 5) ?
                     <Seconds key={`second_${item}_${i}`}>
