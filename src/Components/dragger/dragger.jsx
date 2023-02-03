@@ -1,15 +1,17 @@
-import React from 'react';
-import {Drag} from "../styled-components";
+import React, {memo} from 'react';
+import {Drag, TotalTimeTrack} from "../styled-components";
 
-function Dragger({handleMouseDown, handleMouseMove, icon}) {
+const Dragger = memo(({className, icon, time, handleMouseDown}) => {
     return (
         <Drag
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
+            onMouseDown={()=>handleMouseDown(className)}
         >
             {icon}
+            <TotalTimeTrack>
+                {time}
+            </TotalTimeTrack>
         </Drag>
     );
-}
+})
 
 export default Dragger;

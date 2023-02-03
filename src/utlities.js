@@ -7,7 +7,6 @@ export function millisToMinutesAndSeconds(millis) {
         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
     }
 }
-
 export function getSecondsTracker(initialTime) {
     const arr = []
     for (let i = 0; i < initialTime; i++) {
@@ -16,11 +15,9 @@ export function getSecondsTracker(initialTime) {
     }
     return arr;
 }
-
 export function fromPxToPercents(currentWidth, initialWidth) {
     return `${currentWidth * 100 / initialWidth}%`
 }
-
 export function fromPercentToPx(currentPx, initialWidth) {
     return currentPx * initialWidth / 100
 }
@@ -31,4 +28,8 @@ export function getTimeFromPx(customWidth, totalTime, totalWidth) {
 
 export function getPxFromTime(customTime, totalWidth, totalTime) {
     return customTime * totalWidth / totalTime
+}
+
+export const getElementAccordingToTimeLapse = (index, timeLapse) => {
+    return index % timeLapse === 0
 }

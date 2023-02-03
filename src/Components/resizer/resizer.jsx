@@ -1,19 +1,18 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {HiddenTimeTrack, ResizerButton} from "../styled-components";
 
-function Resizer({time, icon, className, reff, handleMouseMove, handleMouseDown}) {
-
+const Resizer = memo(({time, icon, className, handleMouseDown}) => {
     return (
         <ResizerButton
-            ref={reff}
             className={className}
-            onMouseMove={handleMouseMove}
-            onMouseDown={handleMouseDown}
+            onMouseDown={()=>handleMouseDown(className)}
         >
             {icon}
-            <HiddenTimeTrack className="timeTracker">{time}</HiddenTimeTrack>
+            <HiddenTimeTrack className="timeTracker">
+                {time}
+            </HiddenTimeTrack>
         </ResizerButton>
     );
-}
+})
 
 export default Resizer;

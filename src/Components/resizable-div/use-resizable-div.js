@@ -1,18 +1,17 @@
 import {useMemo, useRef, useState} from 'react';
 import {getPxFromTime, getSecondsTracker, getTimeFromPx, millisToMinutesAndSeconds} from "../../utlities";
+import useEventListener from "./use-event-listener";
 
 
 function UseResizableDiv(initialData) {
 
     const {initialTime, minTime} = initialData
     const resizableRef = useRef(null)
+    // const startTimeRef = useRef("00:00")
+    // const endTimeRef = useRef(millisToMinutesAndSeconds(initialTime))
+    // const totalTimeRef = useRef(millisToMinutesAndSeconds(initialTime))
 
     const [action, setAction] = useState(null)
-
-    const [customLeft, setCustomLeft] = useState(0)
-    const [customRight, setCustomRight] = useState(0)
-
-    const [mouseMoveStart, setMouseMoveStart] = useState(null)
 
     const [customTime, setCustomTime] = useState({
         start: "00:00",
@@ -20,57 +19,57 @@ function UseResizableDiv(initialData) {
         time: millisToMinutesAndSeconds(initialTime)
     })
 
-    const secondsTrack = useMemo(() => getSecondsTracker(initialTime), [initialTime])
-    const handleMouseDown = (event, action) => {
-        setAction(action)
-        setMouseMoveStart(event.clientX)
-    }
-    const handleMouseMove = event => {
-        const initialWidth = resizableRef.current.parentElement.offsetWidth
-        const minWidth = getPxFromTime(minTime, initialWidth, initialTime)
-        const deltaX = event.clientX - mouseMoveStart
+    useEventListener(action, "mousemove", handleMouseMove)
 
-        if (action === "right") {
-            if (deltaX <= customRight && initialWidth + deltaX - customLeft >= minWidth) {
-                resizableRef.current.style.width = `${initialWidth - customRight - customLeft + deltaX}px`
-            }
-        } else if (action === "left") {
-            if (initialWidth - deltaX >= minWidth && deltaX + customLeft >= 0) {
-                resizableRef.current.style.width = `${initialWidth - deltaX - customLeft - customRight}px`
-                resizableRef.current.style.left = `${deltaX + customLeft}px`
-            }
-        } else if (action === "drag") {
-            if (deltaX + customLeft >= 0 && deltaX <= customRight) {
-                resizableRef.current.style.left = `${deltaX + customLeft}px`
-            }
+    const secondsTrack = useMemo(() => {
+        return getSecondsTracker(initialTime)
+    }, [initialTime])
+
+    const handleMouseDown = action => {
+        setAction(action)
+    }
+
+    function handleMouseMove(event) {
+        const resizable = resizableRef.current
+        const {style, offsetWidth, offsetLeft} = resizable
+        const initialWidth = resizable.parentElement.offsetWidth
+        const minWidth = getPxFromTime(minTime, initialWidth, initialTime)
+        const deltaX = event.movementX
+        const rightWidth = deltaX + offsetWidth
+        const leftWidth = offsetWidth - deltaX
+        const currentLeft = offsetLeft + deltaX
+
+        if (action === "right" && rightWidth >= minWidth && rightWidth + offsetLeft <= initialWidth) {
+            style.width = `${rightWidth}px`
+        } else if (action === "left" && leftWidth >= minWidth && currentLeft >= 0) {
+            style.width = `${leftWidth}px`
+            style.left = `${currentLeft}px`
+        } else if (action === "drag" && currentLeft >= 0 && currentLeft + offsetWidth <= initialWidth) {
+            style.left = `${currentLeft}px`
         }
         setCustomTime({
-            ...customTime,
-            time: millisToMinutesAndSeconds(getTimeFromPx(resizableRef.current.offsetWidth, initialTime, initialWidth)),
-            end: millisToMinutesAndSeconds(getTimeFromPx((resizableRef.current.offsetWidth + resizableRef.current.offsetLeft), initialTime, initialWidth)),
-            start: millisToMinutesAndSeconds(getTimeFromPx(resizableRef.current.offsetLeft, initialTime, initialWidth))
+            time: millisToMinutesAndSeconds(getTimeFromPx(offsetWidth, initialTime, initialWidth)),
+            end: millisToMinutesAndSeconds(getTimeFromPx((offsetWidth + offsetLeft),
+                initialTime, initialWidth)),
+            start: millisToMinutesAndSeconds(getTimeFromPx(offsetLeft, initialTime, initialWidth))
         })
+
+        // totalTimeRef.current = millisToMinutesAndSeconds(getTimeFromPx(offsetWidth, initialTime, initialWidth))
+        // endTimeRef.current = millisToMinutesAndSeconds(getTimeFromPx((offsetWidth + offsetLeft), initialTime, initialWidth))
+        // startTimeRef.current = millisToMinutesAndSeconds(getTimeFromPx(offsetLeft, initialTime, initialWidth))
+
     }
 
-    const handleMouseUp = () => {
-        if (action) setAction(null)
-        setCustomLeft(resizableRef.current.offsetLeft)
-        setCustomRight(resizableRef.current.parentElement.offsetWidth
-            - (resizableRef.current.offsetWidth + resizableRef.current.offsetLeft))
-    }
-
-    const getElementAccordingToTimeLapse = (index, timeLapse) => {
-        return index % timeLapse === 0
+    function handleMouseUp() {
+        setAction(null)
     }
 
     return {
         resizableRef,
         customTime,
         secondsTrack,
-        handleMouseUp,
-        handleMouseMove,
         handleMouseDown,
-        getElementAccordingToTimeLapse
+        handleMouseUp
     }
 }
 
